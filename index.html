@@ -79,22 +79,8 @@ textarea.fi { resize:vertical; }
 .stat-num  { font-size:30px; font-weight:900; color:#fff; letter-spacing:-0.02em; line-height:1; margin-bottom:6px; }
 .stat-lbl  { font-size:12px; color:rgba(255,255,255,0.55); font-weight:500; }
 
-.prod-grid { display:flex; flex-direction:column; gap:10px; }
-
-/* prod-card 내부 레이아웃 */
-.pc-inner   { display:flex; align-items:center; gap:24px; }
-.pc-left    { flex:1; min-width:0; }
-.pc-right   { flex-shrink:0; display:flex; flex-direction:column; align-items:flex-end; gap:10px; }
-.pc-meta    { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
-.pc-name    { font-size:16px; font-weight:800; color:#111; line-height:1.3; margin-bottom:6px; }
-.pc-desc    { font-size:13px; color:var(--ink3); line-height:1.7; }
-.pc-sched   { font-size:12px; color:var(--ink4); font-weight:500; white-space:nowrap; }
-.pc-btns    { display:flex; gap:8px; }
-
-@media (max-width:640px) {
-  .pc-inner  { flex-direction:column; align-items:flex-start; gap:12px; }
-  .pc-right  { align-items:flex-start; width:100%; flex-direction:row; justify-content:space-between; align-items:center; }
-}
+.prod-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
+@media (max-width:640px) { .prod-grid { grid-template-columns:1fr; } }
 
 .step-grid  { display:grid; grid-template-columns:repeat(4,1fr); gap:0; position:relative; }
 .step-card  { background:#fff; border-radius:0; padding:28px 20px 24px; border:1px solid var(--bd); border-right:none; text-align:center; position:relative; }
@@ -667,33 +653,43 @@ function App() {
                   className={`prod-card s-${p.status}`}
                   style={{
                     background:'#fff', border:'1px solid var(--bd)', borderRadius:12,
-                    padding:'20px 24px 20px 28px',
-                    boxShadow:'var(--shadow-sm)',
+                    padding:'20px 24px 16px 28px',
+                    boxShadow: 'var(--shadow-sm)',
                     transition:'border-color .15s, box-shadow .15s, transform .15s',
                   }}
                   onMouseEnter={e => { e.currentTarget.style.borderColor='#bdd0f0'; e.currentTarget.style.boxShadow='var(--shadow-hover)'; e.currentTarget.style.transform='translateY(-1px)'; }}
                   onMouseLeave={e => { e.currentTarget.style.borderColor='var(--bd)'; e.currentTarget.style.boxShadow='var(--shadow-sm)'; e.currentTarget.style.transform='none'; }}>
-                  <div className="pc-inner">
-                    {/* 왼쪽: 메타 + 상품명 + 설명 */}
-                    <div className="pc-left">
-                      <div className="pc-meta">
-                        <Badge s={p.status} />
-                        {p.cat && (
-                          <span style={{ fontSize:11, fontWeight:600, color:'var(--ink3)', background:'var(--bg3)', border:'1px solid var(--bd)', borderRadius:4, padding:'2px 8px' }}>
-                            {p.cat}
-                          </span>
-                        )}
-                      </div>
-                      <p className="pc-name">{p.name}</p>
-                      {p.short && <p className="pc-desc">{p.short}</p>}
-                    </div>
-                    {/* 오른쪽: 일정 + 버튼 */}
-                    <div className="pc-right">
-                      <span className="pc-sched">{p.schedule || '—'}</span>
-                      <div className="pc-btns">
-                        <button className="btn btn-out btn-sm" style={{ fontSize:12 }} onClick={() => setSelProd(p)}>내용 확인</button>
-                        <button className="btn btn-pri btn-sm" style={{ fontSize:12 }} onClick={() => openReq(p)}>검토 요청</button>
-                      </div>
+
+                  {/* 1행: 상태 배지 + 대출구분 */}
+                  <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:10 }}>
+                    <Badge s={p.status} />
+                    {p.cat && (
+                      <span style={{ fontSize:11, fontWeight:600, color:'var(--ink3)', background:'var(--bg3)', border:'1px solid var(--bd)', borderRadius:4, padding:'2px 8px' }}>
+                        {p.cat}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* 2행: 상품명 */}
+                  <p style={{ fontSize:17, fontWeight:800, color:'#111', lineHeight:1.3, marginBottom:8 }}>
+                    {p.name}
+                  </p>
+
+                  {/* 3행: 설명 */}
+                  {p.short && (
+                    <p style={{ fontSize:13, color:'var(--ink3)', lineHeight:1.7, marginBottom:16, display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical', overflow:'hidden' }}>
+                      {p.short}
+                    </p>
+                  )}
+
+                  {/* 4행: 일정 + 버튼 (좌우 분리) */}
+                  <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:10, paddingTop:14, borderTop:'1px solid var(--bg3)' }}>
+                    <span style={{ fontSize:12, color:'var(--ink4)', fontWeight:500 }}>
+                      {p.schedule || '—'}
+                    </span>
+                    <div style={{ display:'flex', gap:8 }}>
+                      <button className="btn btn-out btn-sm" style={{ fontSize:12 }} onClick={() => setSelProd(p)}>내용 확인</button>
+                      <button className="btn btn-pri btn-sm" style={{ fontSize:12 }} onClick={() => openReq(p)}>검토 요청</button>
                     </div>
                   </div>
                 </div>
