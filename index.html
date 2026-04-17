@@ -79,33 +79,21 @@ textarea.fi { resize:vertical; }
 .stat-num  { font-size:30px; font-weight:900; color:#fff; letter-spacing:-0.02em; line-height:1; margin-bottom:6px; }
 .stat-lbl  { font-size:12px; color:rgba(255,255,255,0.55); font-weight:500; }
 
-.prod-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:12px; }
-@media (max-width:640px) { .prod-grid { grid-template-columns:1fr; } }
+.prod-grid { display:flex; flex-direction:column; gap:10px; }
 
-/* ── Status List ── */
-.slist { background:#fff; border:1px solid var(--bd); border-radius:14px; overflow:hidden; box-shadow:var(--shadow-sm); }
-.slist-head { display:grid; grid-template-columns:90px minmax(0,1fr) 88px 210px 156px; align-items:center; padding:10px 20px; background:var(--bg3); border-bottom:1.5px solid var(--bd2); gap:12px; }
-.slist-head span { font-size:13px; font-weight:500; color:var(--ink2); }
-.slist-row { display:grid; grid-template-columns:90px minmax(0,1fr) 88px 210px 156px; align-items:center; padding:0 20px; gap:12px; border-bottom:1px solid var(--bd); min-height:64px; transition:background .12s; position:relative; cursor:default; }
-.slist-row:last-child { border-bottom:none; }
-.slist-row:hover { background:#fafaf8; }
-.slist-row::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:0; }
-.slist-row.s-open::before    { background:var(--blue); }
-.slist-row.s-upcoming::before{ background:#2e9e50; }
-.slist-row.s-check::before   { background:#d4a017; }
-.slist-row.s-closed::before  { background:#e74c3c; }
-.row-name-wrap { min-width:0; padding:14px 0; }
-.row-name  { font-size:14px; font-weight:700; color:#111; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.35; }
-.row-short { font-size:12px; color:var(--ink3); margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.5; }
-.cat-tag   { display:inline-block; font-size:11px; font-weight:600; color:var(--ink2); background:var(--bg3); border:1px solid var(--bd); border-radius:4px; padding:2px 9px; white-space:nowrap; }
-.row-sched { font-size:13px; color:var(--ink2); white-space:nowrap; }
-.row-btns  { display:flex; gap:6px; justify-content:flex-end; flex-shrink:0; }
+/* prod-card 내부 레이아웃 */
+.pc-inner   { display:flex; align-items:center; gap:24px; }
+.pc-left    { flex:1; min-width:0; }
+.pc-right   { flex-shrink:0; display:flex; flex-direction:column; align-items:flex-end; gap:10px; }
+.pc-meta    { display:flex; align-items:center; gap:8px; margin-bottom:8px; }
+.pc-name    { font-size:16px; font-weight:800; color:#111; line-height:1.3; margin-bottom:6px; }
+.pc-desc    { font-size:13px; color:var(--ink3); line-height:1.7; }
+.pc-sched   { font-size:12px; color:var(--ink4); font-weight:500; white-space:nowrap; }
+.pc-btns    { display:flex; gap:8px; }
 
-@media (max-width:680px) {
-  .slist-head { display:none; }
-  .slist-row { grid-template-columns:1fr; padding:14px 16px 14px 20px; gap:7px; height:auto; }
-  .row-name  { white-space:normal; }
-  .row-btns  { justify-content:flex-start; margin-top:4px; }
+@media (max-width:640px) {
+  .pc-inner  { flex-direction:column; align-items:flex-start; gap:12px; }
+  .pc-right  { align-items:flex-start; width:100%; flex-direction:row; justify-content:space-between; align-items:center; }
 }
 
 .step-grid  { display:grid; grid-template-columns:repeat(4,1fr); gap:0; position:relative; }
@@ -295,7 +283,7 @@ const PURPOSES = ['운전자금 (일상 경영자금)','시설자금 (설비·�
 const TIMES    = ['평일 오전 (9~12시)','평일 오후 (13~18시)','평일 아무 때나','주말 가능'];
 const TABS     = ['전체','접수중','접수예정','마감'];
 const FM       = { '전체':null, '접수중':'open', '접수예정':'upcoming', '마감':'closed' };
-const STATUS_ORDER = { upcoming:0, open:1, check:2, closed:3 };
+const STATUS_ORDER = { open:0, upcoming:1, closed:2 };
 
 /* ── 유틸 ── */
 function Badge({ s }) {
@@ -673,33 +661,40 @@ function App() {
             <p style={{ textAlign:'center', padding:'48px 0', fontSize:15, color:'#777' }}>해당 상태의 상품이 없습니다.</p>
           )}
           {!loading && filtered.length > 0 && (
-            <div className="slist">
-              {/* 헤더 (데스크톱) */}
-              <div className="slist-head">
-                <span>상태</span>
-                <span>상품명</span>
-                <span>대출구분</span>
-                <span>접수일정</span>
-                <span></span>
-              </div>
-              {/* 행 */}
+            <div className="prod-grid">
               {filtered.map(p => (
-                <div key={p.id} className={`slist-row s-${p.status}`}>
-                  {/* 상태 배지 */}
-                  <div><Badge s={p.status} /></div>
-                  {/* 상품명 */}
-                  <div className="row-name-wrap">
-                    <div className="row-name">{p.name}</div>
-                    {p.short && <div className="row-short">{p.short}</div>}
-                  </div>
-                  {/* 대출구분 */}
-                  <div>{p.cat && <span className="cat-tag">{p.cat}</span>}</div>
-                  {/* 접수일정 */}
-                  <div className="row-sched">{p.schedule || '—'}</div>
-                  {/* 버튼 */}
-                  <div className="row-btns">
-                    <button className="btn btn-out btn-sm" style={{ fontSize:12 }} onClick={() => setSelProd(p)}>내용 확인</button>
-                    <button className="btn btn-pri btn-sm" style={{ fontSize:12 }} onClick={() => openReq(p)}>검토 요청</button>
+                <div key={p.id}
+                  className={`prod-card s-${p.status}`}
+                  style={{
+                    background:'#fff', border:'1px solid var(--bd)', borderRadius:12,
+                    padding:'20px 24px 20px 28px',
+                    boxShadow:'var(--shadow-sm)',
+                    transition:'border-color .15s, box-shadow .15s, transform .15s',
+                  }}
+                  onMouseEnter={e => { e.currentTarget.style.borderColor='#bdd0f0'; e.currentTarget.style.boxShadow='var(--shadow-hover)'; e.currentTarget.style.transform='translateY(-1px)'; }}
+                  onMouseLeave={e => { e.currentTarget.style.borderColor='var(--bd)'; e.currentTarget.style.boxShadow='var(--shadow-sm)'; e.currentTarget.style.transform='none'; }}>
+                  <div className="pc-inner">
+                    {/* 왼쪽: 메타 + 상품명 + 설명 */}
+                    <div className="pc-left">
+                      <div className="pc-meta">
+                        <Badge s={p.status} />
+                        {p.cat && (
+                          <span style={{ fontSize:11, fontWeight:600, color:'var(--ink3)', background:'var(--bg3)', border:'1px solid var(--bd)', borderRadius:4, padding:'2px 8px' }}>
+                            {p.cat}
+                          </span>
+                        )}
+                      </div>
+                      <p className="pc-name">{p.name}</p>
+                      {p.short && <p className="pc-desc">{p.short}</p>}
+                    </div>
+                    {/* 오른쪽: 일정 + 버튼 */}
+                    <div className="pc-right">
+                      <span className="pc-sched">{p.schedule || '—'}</span>
+                      <div className="pc-btns">
+                        <button className="btn btn-out btn-sm" style={{ fontSize:12 }} onClick={() => setSelProd(p)}>내용 확인</button>
+                        <button className="btn btn-pri btn-sm" style={{ fontSize:12 }} onClick={() => openReq(p)}>검토 요청</button>
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
