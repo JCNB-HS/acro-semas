@@ -86,7 +86,7 @@ textarea.fi { resize:vertical; }
 .slist { background:#fff; border:1px solid var(--bd); border-radius:14px; overflow:hidden; box-shadow:var(--shadow-sm); }
 .slist-head { display:grid; grid-template-columns:90px minmax(0,1fr) 88px 210px 156px; align-items:center; padding:10px 20px; background:var(--bg3); border-bottom:1.5px solid var(--bd2); gap:12px; }
 .slist-head span { font-size:13px; font-weight:500; color:var(--ink2); }
-.slist-row { display:grid; grid-template-columns:90px minmax(0,1fr) 88px 210px 156px; align-items:center; padding:0 20px; gap:12px; border-bottom:1px solid var(--bd); height:56px; transition:background .12s; position:relative; cursor:default; }
+.slist-row { display:grid; grid-template-columns:90px minmax(0,1fr) 88px 210px 156px; align-items:center; padding:0 20px; gap:12px; border-bottom:1px solid var(--bd); min-height:64px; transition:background .12s; position:relative; cursor:default; }
 .slist-row:last-child { border-bottom:none; }
 .slist-row:hover { background:#fafaf8; }
 .slist-row::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:0; }
@@ -94,7 +94,9 @@ textarea.fi { resize:vertical; }
 .slist-row.s-upcoming::before{ background:#2e9e50; }
 .slist-row.s-check::before   { background:#d4a017; }
 .slist-row.s-closed::before  { background:#e74c3c; }
-.row-name  { font-size:14px; font-weight:700; color:#111; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; min-width:0; }
+.row-name-wrap { min-width:0; padding:14px 0; }
+.row-name  { font-size:14px; font-weight:700; color:#111; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.35; }
+.row-short { font-size:12px; color:var(--ink3); margin-top:3px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; line-height:1.5; }
 .cat-tag   { display:inline-block; font-size:11px; font-weight:600; color:var(--ink2); background:var(--bg3); border:1px solid var(--bd); border-radius:4px; padding:2px 9px; white-space:nowrap; }
 .row-sched { font-size:13px; color:var(--ink2); white-space:nowrap; }
 .row-btns  { display:flex; gap:6px; justify-content:flex-end; flex-shrink:0; }
@@ -686,8 +688,9 @@ function App() {
                   {/* 상태 배지 */}
                   <div><Badge s={p.status} /></div>
                   {/* 상품명 */}
-                  <div>
+                  <div className="row-name-wrap">
                     <div className="row-name">{p.name}</div>
+                    {p.short && <div className="row-short">{p.short}</div>}
                   </div>
                   {/* 대출구분 */}
                   <div>{p.cat && <span className="cat-tag">{p.cat}</span>}</div>
