@@ -148,6 +148,20 @@ textarea.fi { resize:vertical; }
 }
 .cdot.on { background:var(--blue); width:18px; border-radius:3px; }
 
+/* 모바일: 네이티브 가로 스크롤 전환 */
+@media (hover: none) {
+  .carousel-viewport {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+  .carousel-viewport::-webkit-scrollbar { display: none; }
+  .carousel-track { transform: none !important; }
+  .pcard { scroll-snap-align: start; }
+  .arr { display: none !important; }
+}
+
 .step-grid  { display:grid; grid-template-columns:repeat(4,1fr); gap:0; position:relative; }
 .step-card  { background:#fff; border-radius:0; padding:28px 20px 24px; border:1px solid var(--bd); border-right:none; text-align:center; position:relative; }
 .step-card:first-child { border-radius:12px 0 0 12px; }
@@ -668,9 +682,7 @@ function Carousel({ id, products, openReq, setSelProd }) {
         onClick={() => { goTo(cur + 1); startAutoplay(); }}>&#8250;</button>
       {/* 트랙 */}
       <div className="carousel-viewport">
-        <div className="carousel-track" ref={trackRef}
-          onTouchStart={onTouchStart}
-          onTouchEnd={onTouchEnd}>
+        <div className="carousel-track" ref={trackRef}>
           {products.map(p => (
             <div key={p.id} className={`pcard s-${p.status}`}>
               <div className="pcard-meta">
