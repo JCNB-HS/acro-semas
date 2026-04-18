@@ -661,12 +661,28 @@ function Carousel({ id, products, openReq, setSelProd }) {
     }
   };
 
+  const viewportRef = useRef(null);
+
   useEffect(() => {
     goTo(0);
     startAutoplay();
     const onResize = () => { goTo(0); };
     window.addEventListener('resize', onResize);
-    return () => { stopAutoplay(); window.removeEventListener('resize', onResize); };
+
+    // 모바일 네이티브 스크롤 시 점 인디케이터 동기화
+    const vp = viewportRef.current;
+    const onScroll = () => {
+      if (!vp) return;
+      const idx = Math.round(vp.scrollLeft / (CARD_W + CARD_GAP));
+      setCur(idx);
+    };
+    if (vp) vp.addEventListener('scroll', onScroll, { passive: true });
+
+    return () => {
+      stopAutoplay();
+      window.removeEventListener('resize', onResize);
+      if (vp) vp.removeEventListener('scroll', onScroll);
+    };
   }, [products]);
 
   if (products.length === 0) return null;
@@ -681,7 +697,7 @@ function Carousel({ id, products, openReq, setSelProd }) {
       <button className={`arr arr-right${cur >= pages - 1 ? ' arr-disabled' : ''}`}
         onClick={() => { goTo(cur + 1); startAutoplay(); }}>&#8250;</button>
       {/* 트랙 */}
-      <div className="carousel-viewport">
+      <div className="carousel-viewport" ref={viewportRef}>
         <div className="carousel-track" ref={trackRef}>
           {products.map(p => (
             <div key={p.id} className={`pcard s-${p.status}`}>
