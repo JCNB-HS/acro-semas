@@ -189,6 +189,7 @@ textarea.fi { resize:vertical; }
   .overlay { align-items:flex-end; padding:0; }
   .hero-btns { flex-direction:column; }
   .hero-btns .btn { width:100%; }
+  .lead { font-size:15px; }
 }
 
 @keyframes heroFloat1 { 0%,100%{transform:translateY(0px) rotate(12deg)} 50%{transform:translateY(-20px) rotate(12deg)} }
@@ -883,7 +884,7 @@ function App() {
             <span style={{ color:'#4a9eff' }}>안내 및 검토 요청</span>
           </h1>
           <p className="lead hero-fadein" style={{ color:'rgba(255,255,255,0.65)', margin:'0 auto 10px', maxWidth:500, animationDelay:'0.2s' }}>
-            정책자금 관련 검토가 필요하신 경우<br/>기본 정보를 남겨주시면 확인 후 안내드리겠습니다.
+            정책자금 검토가 필요하신 경우<br/>기본 정보를 남겨주시면 확인 후 안내드립니다.
           </p>
           <p style={{ margin:'0 auto 36px', opacity:0 }}>&nbsp;</p>
           <div className="hero-btns hero-fadein" style={{ display:'flex', gap:12, justifyContent:'center', flexWrap:'wrap', marginBottom:0, animationDelay:'0.3s' }}>
@@ -1005,7 +1006,7 @@ function App() {
               { n:1, t:'검토 요청 접수',    d:'기본 정보를 남겨주시면 접수가 완료됩니다.' },
               { n:2, t:'내용 확인 및 검토', d:'접수 내용을 바탕으로 대상 여부와 적합 상품을 검토합니다.' },
               { n:3, t:'추가 정보 요청',    d:'필요 시 담당자가 추가 정보를 요청드립니다.' },
-              { n:4, t:'검토 결과 안내',    d:'검토 결과에 따라 진행 가능 여부 및 후속 절차를 안내드립니다.' },
+              { n:4, t:'검토 결과 안내',    d:'진행 가능 여부 및 후속 절차를 안내드립니다.' },
             ].map(s => (
               <div key={s.n} className="step-card">
                 <div className="step-circle">{s.n}</div>
